@@ -8,12 +8,16 @@ cd aws-astro-ee && terragrunt apply
 ```
 
 # Setup
-This project utilizes: terraform, terragrunt, eksctl, helm. Please have all those downloaded.
+This project utilizes: `terraform`, `terragrunt`, `eksctl`, `helm`, `kubectl`. Please have all those downloaded.
+
+This project will also use your connection credentials for AWS, please ensure that you are running with correctly set up credentials.
 
 Please fully understand the normal install instructions - as that's what this terraform project replicates:
-https://www.astronomer.io/docs/enterprise/v0.25/install/aws/install-aws-standard
+<https://www.astronomer.io/docs/enterprise/v0.25/install/aws/install-aws-standard>
 
-Please change the `input` blocks within each `terragrunt.hcl` file
+Please change the `input` blocks within each `terragrunt.hcl` file.
+
+Please have an S3 bucket available already, for remote state management.
 
 # Why Terragrunt
 The Astronomer Enterprise setup requires `aws` (eks) -> `kubernetes/helm` (inside eks) -> `aws` (get values from eks and apply elsewhere).
@@ -37,8 +41,9 @@ between modules.
 - Uses `helm` with `values.yaml` 
 - Uses a self-signed certificate for `astronomer-tls`
 - NOTE: that we are setting `nginx.ingressAnnotations` `service.beta.kubernetes.io/aws-load-balancer-ssl-cert` with the ACM ARN
+- NOTE: that we are setting `astronomer.houston.config.email.smtpUrl` with the SMTP IAM User credentials
 - Creates `astronomer-bootstrap` with RDS credentials
-- Creates DNS entries in Route53
+- Creates `astronomer-tls` with a self-signed certificate
 
 # AWS DNS
 - Sets a `*.BASEDOMAIN` DNS record in a Route53 zone
