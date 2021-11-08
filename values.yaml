@@ -1,0 +1,30 @@
+global:
+  tlsSecret: astronomer-tls
+
+nginx:
+  privateLoadBalancer: false
+  ingressAnnotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: nlb
+    # service.beta.kubernetes.io/aws-load-balancer-ssl-cert: <arn of the acm>  # terraform will set this one
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: ssl
+
+    # https://www.notion.so/astronomerio/Create-a-Self-Signed-Cert-and-Save-to-K8s-c435d83be6144616bd997d0c792eaf83
+
+astronomer:
+  houston:
+    config:
+      auth:
+        github:
+          enabled: false
+        local:
+          enabled: false
+        openidConnect:
+          google:
+            enabled: true
+      deployments:
+        serviceAccountAnnotationKey: eks.amazonaws.com/role-arn # Flag to enable using IAM roles (don't enter a specific role)
+      email:
+        enabled: true
+        # smtpUrl: <smtp url>  # terraform will set this one
+      emailConfirmation: false
+      publicSignups: true

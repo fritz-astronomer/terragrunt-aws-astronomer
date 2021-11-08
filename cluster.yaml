@@ -1,0 +1,39 @@
+iam:
+  withOIDC: true  # Allows us to assume IAM roles via kube service accounts
+  serviceAccounts:
+    - metadata:
+        name: cluster-autoscaler
+        namespace: kube-system
+      wellKnownPolicies:  # Attach autoscaler policy to the role
+        autoScaler: true
+
+managedNodeGroups:
+  - name: cortica-nodegroup
+    instanceType: m5.xlarge
+    desiredCapacity: 4
+    ssh:
+      allow: false
+    labels:
+      role: scheduler
+    tags:
+      nodegroup-role: scheduler
+    iam:
+      withAddonPolicies:
+        autoScaler: true # Same as --asg-access
+
+  - name: cortica-spot
+    spot: true
+    instanceTypes:
+    - m5.xlarge
+    - m5a.xlarge
+    - m4.xlarge
+    minSize: 1
+    maxSize: 10
+    ssh:
+      allow: false
+    tags:
+      k8s.io/cluster-autoscaler/enabled: "true"
+      k8s.io/cluster-autoscaler/cortica: "owned"
+    iam:
+      withAddonPolicies:
+        autoScaler: true # Same as --asg-access
